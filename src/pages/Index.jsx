@@ -1,7 +1,15 @@
-import { Box, Container, Flex, Heading, Text, VStack, Link, HStack, Spacer } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, Text, VStack, Link, HStack, Spacer, Button } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(storedPosts);
+  }, []);
+
   return (
     <Box>
       {/* Navigation Bar */}
@@ -24,6 +32,9 @@ const Index = () => {
               <Link as={RouterLink} to="/contact" _hover={{ textDecoration: 'none' }} color="white">
                 Contact
               </Link>
+              <Button as={RouterLink} to="/add-post" colorScheme="teal" variant="solid">
+                Add New Post
+              </Button>
             </HStack>
           </Flex>
         </Container>
@@ -41,14 +52,13 @@ const Index = () => {
           <Box>
             <Heading as="h3" size="lg" mb={4}>Recent Posts</Heading>
             <VStack spacing={4} align="stretch">
-              <Box p={4} shadow="md" borderWidth="1px" borderRadius="md">
-                <Heading as="h4" size="md">Post Title 1</Heading>
-                <Text mt={2}>This is a summary of the first post...</Text>
-              </Box>
-              <Box p={4} shadow="md" borderWidth="1px" borderRadius="md">
-                <Heading as="h4" size="md">Post Title 2</Heading>
-                <Text mt={2}>This is a summary of the second post...</Text>
-              </Box>
+              {posts.map((post, index) => (
+                <Box key={index} p={4} shadow="md" borderWidth="1px" borderRadius="md">
+                  <Heading as="h4" size="md">{post.title}</Heading>
+                  <Text mt={2}>{post.content}</Text>
+                  {post.image && <img src={URL.createObjectURL(post.image)} alt={post.title} style={{ marginTop: '10px', maxHeight: '200px' }} />}
+                </Box>
+              ))}
             </VStack>
           </Box>
         </VStack>
